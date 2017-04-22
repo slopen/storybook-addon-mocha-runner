@@ -1,0 +1,9 @@
+#mocha.addon-mocha-runner {
+    margin:0;
+    width:100%;
+}
+
+#mocha.addon-mocha-runner #mocha-stats {
+    position:static;
+    padding:0 10px;
+}
