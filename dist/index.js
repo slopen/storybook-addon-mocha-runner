@@ -39,6 +39,10 @@ var _storybookAddons2 = _interopRequireDefault(_storybookAddons);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var cloneSuite = function cloneSuite(suite) {
+	if (!suite) {
+		return console.error('ERROR attempt to clone:', suite);
+	}
+
 	var clone = suite.clone();
 
 	clone.tests = suite.tests.map(function (test) {
@@ -82,13 +86,18 @@ var MochaRunner = function (_Component) {
 			    suites = _props.suites;
 
 			var storyName = [info.kind, info.story].join(' ');
+			var suite = suites[storyName];
 
-			rootSuite.suites = [];
-			rootSuite.addSuite(cloneSuite(suites[storyName]));
+			if (suite) {
+				rootSuite.suites = [];
+				rootSuite.addSuite(cloneSuite(suites[storyName]));
 
-			window.mocha.run().on('end', function () {
-				return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
-			});
+				window.mocha.run().on('end', function () {
+					return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
+				});
+			} else {
+				console.error('ERROR suite not found by name:', storyName);
+			}
 		}
 	}, {
 		key: 'render',
