@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 import addons from '@kadira/storybook-addons';
 
 const cloneSuite = (suite) => {
+	if (!suite) {
+		return console.error ('ERROR attempt to clone:', suite);
+	}
+
 	const clone = suite.clone ();
 
 	clone.tests = suite.tests.map ((test) => test.clone ());
@@ -24,16 +28,22 @@ class MochaRunner extends Component {
 
 		const {info, suites} = this.props;
 		const storyName = [info.kind, info.story].join (' ');
+		const suite = suites [storyName];
 
-		rootSuite.suites = []
-		rootSuite.addSuite (cloneSuite (suites [storyName]));
+		if (suite) {
+			rootSuite.suites = []
+			rootSuite.addSuite (cloneSuite (suites [storyName]));
 
-		window.mocha
-			.run ()
-			.on ('end', () => channel.emit (
-				'addon-mocha-runner/test-results',
-				document.getElementById ('mocha').innerHTML
-			));
+			window.mocha
+				.run ()
+				.on ('end', () => channel.emit (
+					'addon-mocha-runner/test-results',
+					document.getElementById ('mocha').innerHTML
+				));
+
+		} else {
+			console.error ('ERROR suite not found by name:', storyName);
+		}
 	}
 
 	render () {
