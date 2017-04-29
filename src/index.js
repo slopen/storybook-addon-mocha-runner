@@ -37,11 +37,11 @@ class MochaRunnerComponent extends Component {
 		const rootSuite = window.mocha.suite;
 
 		const {info, suites} = this.props;
-		const storyName = [info.kind, info.story].join (' ');
+		const storyName = info.story;
 		const suite = suites [storyName];
 
 		if (suite) {
-			rootSuite.suites = []
+			rootSuite.suites = [];
 			rootSuite.addSuite (
 				cloneSuite (suites [storyName], this.refs.story)
 			);
