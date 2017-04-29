@@ -92,7 +92,7 @@ var MochaRunnerComponent = function (_Component) {
 			    info = _props.info,
 			    suites = _props.suites;
 
-			var storyName = [info.kind, info.story].join(' ');
+			var storyName = info.story;
 			var suite = suites[storyName];
 
 			if (suite) {
