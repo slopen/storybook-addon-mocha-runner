@@ -17,6 +17,13 @@
     "storybook": "start-storybook -p 9010",
     "publish-storybook": "bash .scripts/publish_storybook.sh"
   },
+  "pre-commit": {
+    "run": [
+      "test"
+    ],
+    "colors": false,
+    "silent": false
+  },
   "devDependencies": {
     "@kadira/storybook": "^2.20.1",
     "babel-cli": "^6.5.0",
@@ -40,6 +47,7 @@
     "git-url-parse": "^6.0.1",
     "jsdom": "^8.3.1",
     "mocha": "^3.2.0",
+    "pre-commit": "^1.2.2",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",

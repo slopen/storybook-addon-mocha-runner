@@ -1,7 +1,15 @@
 import React, {Component} from 'react';
 import addons from '@kadira/storybook-addons';
 
-const cloneSuite = (suite) => {
+const cloneHook = (htmlElement) => (hook) => {
+	const hookFn = hook.fn;
+
+	hook.fn = (done) => hookFn (done, {attachTo: htmlElement});
+
+	return Object.create (hook);
+}
+
+const cloneSuite = (suite, htmlElement) => {
 	if (!suite) {
 		return console.error ('ERROR attempt to clone:', suite);
 	}
@@ -10,10 +18,10 @@ const cloneSuite = (suite) => {
 
 	clone.tests = suite.tests.map ((test) => test.clone ());
 
-	clone._beforeAll = suite._beforeAll.map ((hook) => Object.create (hook));
-	clone._beforeEach = suite._beforeEach.map ((hook) => Object.create (hook));
-	clone._afterAll = suite._afterAll.map ((hook) => Object.create (hook));
-	clone._afterEach = suite._afterEach.map ((hook) => Object.create (hook));
+	clone._beforeAll = suite._beforeAll.map (cloneHook (htmlElement));
+	clone._beforeEach = suite._beforeEach.map (cloneHook (htmlElement));
+	clone._afterAll = suite._afterAll.map (cloneHook (htmlElement));
+	clone._afterEach = suite._afterEach.map (cloneHook (htmlElement));
 
 	clone.suites = suite.suites.map (cloneSuite);
 
@@ -21,7 +29,7 @@ const cloneSuite = (suite) => {
 }
 
 
-class MochaRunner extends Component {
+class MochaRunnerComponent extends Component {
 	componentDidMount () {
 		const channel = addons.getChannel ();
 		const rootSuite = window.mocha.suite;
@@ -32,7 +40,9 @@ class MochaRunner extends Component {
 
 		if (suite) {
 			rootSuite.suites = []
-			rootSuite.addSuite (cloneSuite (suites [storyName]));
+			rootSuite.addSuite (
+				cloneSuite (suites [storyName], this.refs.story)
+			);
 
 			window.mocha
 				.run ()
@@ -47,11 +57,9 @@ class MochaRunner extends Component {
 	}
 
 	render () {
-		const {story} = this.props;
-
 		return (
 			<div>
-				<div id="story">{story}</div>
+				<div id="story" ref="story"></div>
 				<div id="mocha" style={{display: 'none'}}></div>
 			</div>
 		);
@@ -67,9 +75,8 @@ export default (suitesList = []) => {
 	}, {});
 
 	return (story, info) => (
-		<MochaRunner
+		<MochaRunnerComponent
 			info={info}
-			story={story ()}
 			suites={suites}/>
 	);
 }
