@@ -40,11 +40,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var cloneHook = function cloneHook(htmlElement) {
 	return function (hook) {
-		var hookFn = hook.fn;
+		var hookFn = hook.fn.hookFn;
+
+		var fn = hookFn || hook.fn;
 
 		hook.fn = function (done) {
-			return hookFn(done, { attachTo: htmlElement });
+			return fn(done, { attachTo: htmlElement });
 		};
+		hook.fn.hookFn = fn;
 
 		return (0, _create2.default)(hook);
 	};

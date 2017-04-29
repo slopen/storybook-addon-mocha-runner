@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import addons from '@kadira/storybook-addons';
 
 const cloneHook = (htmlElement) => (hook) => {
-	const hookFn = hook.fn;
+	const {hookFn} = hook.fn;
+	const fn = hookFn || hook.fn;
 
-	hook.fn = (done) => hookFn (done, {attachTo: htmlElement});
+	hook.fn = (done) => fn (done, {attachTo: htmlElement});
+	hook.fn.hookFn = fn;
 
 	return Object.create (hook);
 }
@@ -65,7 +67,6 @@ class MochaRunnerComponent extends Component {
 		);
 	}
 }
-
 
 export default (suitesList = []) => {
 	const suites = suitesList.reduce ((acc, suite) => {
