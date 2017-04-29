@@ -38,7 +38,19 @@ var _storybookAddons2 = _interopRequireDefault(_storybookAddons);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var cloneSuite = function cloneSuite(suite) {
+var cloneHook = function cloneHook(htmlElement) {
+	return function (hook) {
+		var hookFn = hook.fn;
+
+		hook.fn = function (done) {
+			return hookFn(done, { attachTo: htmlElement });
+		};
+
+		return (0, _create2.default)(hook);
+	};
+};
+
+var cloneSuite = function cloneSuite(suite, htmlElement) {
 	if (!suite) {
 		return console.error('ERROR attempt to clone:', suite);
 	}
@@ -49,33 +61,25 @@ var cloneSuite = function cloneSuite(suite) {
 		return test.clone();
 	});
 
-	clone._beforeAll = suite._beforeAll.map(function (hook) {
-		return (0, _create2.default)(hook);
-	});
-	clone._beforeEach = suite._beforeEach.map(function (hook) {
-		return (0, _create2.default)(hook);
-	});
-	clone._afterAll = suite._afterAll.map(function (hook) {
-		return (0, _create2.default)(hook);
-	});
-	clone._afterEach = suite._afterEach.map(function (hook) {
-		return (0, _create2.default)(hook);
-	});
+	clone._beforeAll = suite._beforeAll.map(cloneHook(htmlElement));
+	clone._beforeEach = suite._beforeEach.map(cloneHook(htmlElement));
+	clone._afterAll = suite._afterAll.map(cloneHook(htmlElement));
+	clone._afterEach = suite._afterEach.map(cloneHook(htmlElement));
 
 	clone.suites = suite.suites.map(cloneSuite);
 
 	return clone;
 };
 
-var MochaRunner = function (_Component) {
-	(0, _inherits3.default)(MochaRunner, _Component);
+var MochaRunnerComponent = function (_Component) {
+	(0, _inherits3.default)(MochaRunnerComponent, _Component);
 
-	function MochaRunner() {
-		(0, _classCallCheck3.default)(this, MochaRunner);
-		return (0, _possibleConstructorReturn3.default)(this, (MochaRunner.__proto__ || (0, _getPrototypeOf2.default)(MochaRunner)).apply(this, arguments));
+	function MochaRunnerComponent() {
+		(0, _classCallCheck3.default)(this, MochaRunnerComponent);
+		return (0, _possibleConstructorReturn3.default)(this, (MochaRunnerComponent.__proto__ || (0, _getPrototypeOf2.default)(MochaRunnerComponent)).apply(this, arguments));
 	}
 
-	(0, _createClass3.default)(MochaRunner, [{
+	(0, _createClass3.default)(MochaRunnerComponent, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			var channel = _storybookAddons2.default.getChannel();
@@ -90,7 +94,7 @@ var MochaRunner = function (_Component) {
 
 			if (suite) {
 				rootSuite.suites = [];
-				rootSuite.addSuite(cloneSuite(suites[storyName]));
+				rootSuite.addSuite(cloneSuite(suites[storyName], this.refs.story));
 
 				window.mocha.run().on('end', function () {
 					return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
@@ -102,22 +106,15 @@ var MochaRunner = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var story = this.props.story;
-
-
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(
-					'div',
-					{ id: 'story' },
-					story
-				),
+				_react2.default.createElement('div', { id: 'story', ref: 'story' }),
 				_react2.default.createElement('div', { id: 'mocha', style: { display: 'none' } })
 			);
 		}
 	}]);
-	return MochaRunner;
+	return MochaRunnerComponent;
 }(_react.Component);
 
 exports.default = function () {
@@ -130,9 +127,8 @@ exports.default = function () {
 	}, {});
 
 	return function (story, info) {
-		return _react2.default.createElement(MochaRunner, {
+		return _react2.default.createElement(MochaRunnerComponent, {
 			info: info,
-			story: story(),
 			suites: suites });
 	};
 };
