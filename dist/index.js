@@ -118,13 +118,13 @@ var MochaRunnerComponent = function (_Component) {
 				console.error('ERROR suite not found by name:', storyName);
 			}
 		}
-	}, {
-		key: 'shouldComponentUpdate',
-		value: function shouldComponentUpdate(a, b) {
-			console.log(a, b);
 
-			return true;
-		}
+		// shouldComponentUpdate (a, b) {
+		// 	console.log (a, b);
+
+		// 	return true;
+		// }
+
 	}, {
 		key: 'render',
 		value: function render() {

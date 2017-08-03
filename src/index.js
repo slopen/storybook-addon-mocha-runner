@@ -68,11 +68,11 @@ class MochaRunnerComponent extends Component {
 		}
 	}
 
-	shouldComponentUpdate (a, b) {
-		console.log (a, b);
+	// shouldComponentUpdate (a, b) {
+	// 	console.log (a, b);
 
-		return true;
-	}
+	// 	return true;
+	// }
 
 	render () {
 		console.log ('render', this.props, this.state);
