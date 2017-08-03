@@ -82,7 +82,7 @@ var runMocha = function runMocha(suite, story, channel) {
 	var rootSuite = window.mocha.suite;
 
 	rootSuite.suites = [];
-	rootSuite.addSuite(cloneSuite(suites[storyName], story));
+	rootSuite.addSuite(cloneSuite(suite, story));
 
 	document.getElementById('mocha').innerHTML = '';
 
@@ -120,7 +120,7 @@ var MochaRunnerComponent = function (_Component) {
 			var suite = suites[storyName];
 
 			if (suite) {
-				_this.runMocha(suite, _this.story, channel);
+				runMocha(suite, _this.story, channel);
 			} else {
 				console.error('ERROR suite not found by name:', storyName);
 			}
