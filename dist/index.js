@@ -85,6 +85,16 @@ var MochaRunnerComponent = function (_Component) {
 	(0, _createClass3.default)(MochaRunnerComponent, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			this.runSuites();
+		}
+	}, {
+		key: 'componenDidUpdate',
+		value: function componenDidUpdate() {
+			this.runSuites();
+		}
+	}, {
+		key: 'runSuites',
+		value: function runSuites() {
 			var channel = _storybookAddons2.default.getChannel();
 			var rootSuite = window.mocha.suite;
 
@@ -97,7 +107,7 @@ var MochaRunnerComponent = function (_Component) {
 
 			if (suite) {
 				rootSuite.suites = [];
-				rootSuite.addSuite(cloneSuite(suites[storyName], this.refs.story));
+				rootSuite.addSuite(cloneSuite(suites[storyName], this.story));
 
 				window.mocha.run().on('end', function () {
 					return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
@@ -109,10 +119,14 @@ var MochaRunnerComponent = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement('div', { id: 'story', ref: 'story' }),
+				_react2.default.createElement('div', { id: 'story', ref: function ref(story) {
+						return _this2.story = story;
+					} }),
 				_react2.default.createElement('div', { id: 'mocha', style: { display: 'none' } })
 			);
 		}

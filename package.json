@@ -25,7 +25,7 @@
     "silent": false
   },
   "devDependencies": {
-    "@kadira/storybook": "^2.20.1",
+    "@kadira/storybook": "^2.35.3",
     "babel-cli": "^6.5.0",
     "babel-core": "^6.5.0",
     "babel-eslint": "^7.0.0",
@@ -37,28 +37,22 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-2": "^6.5.0",
     "chai": "^3.5.0",
-    "enzyme": "^2.2.0",
+    "enzyme": "^2.8.2",
     "eslint": "^3.6.1",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-plugin-babel": "^3.2.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^0.6.2",
     "eslint-plugin-react": "^6.10.3",
-    "git-url-parse": "^6.0.1",
-    "jsdom": "^8.3.1",
-    "mocha": "^3.2.0",
+    "jsdom": "^10.1.0",
+    "mocha": "^3.3.0",
     "pre-commit": "^1.2.2",
-    "react": "^15.3.2",
-    "react-addons-test-utils": "^15.3.2",
-    "react-dom": "^15.3.2",
     "sinon": "^1.17.6"
   },
-  "peerDependencies": {
-    "react": "^0.14.7 || ^15.0.0",
-    "@kadira/storybook-addons": "^v1.3.1"
-  },
   "dependencies": {
-    "babel-runtime": "^6.5.0"
+    "babel-runtime": "^6.25.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   },
   "main": "dist/index.js",
   "engines": {

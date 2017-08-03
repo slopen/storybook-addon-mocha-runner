@@ -33,6 +33,14 @@ const cloneSuite = (suite, htmlElement) => {
 
 class MochaRunnerComponent extends Component {
 	componentDidMount () {
+		this.runSuites ();
+	}
+
+	componenDidUpdate () {
+		this.runSuites ();
+	}
+
+	runSuites () {
 		const channel = addons.getChannel ();
 		const rootSuite = window.mocha.suite;
 
@@ -43,7 +51,7 @@ class MochaRunnerComponent extends Component {
 		if (suite) {
 			rootSuite.suites = [];
 			rootSuite.addSuite (
-				cloneSuite (suites [storyName], this.refs.story)
+				cloneSuite (suites [storyName], this.story)
 			);
 
 			window.mocha
@@ -61,7 +69,7 @@ class MochaRunnerComponent extends Component {
 	render () {
 		return (
 			<div>
-				<div id="story" ref="story"></div>
+				<div id="story" ref={(story) => this.story = story}/>
 				<div id="mocha" style={{display: 'none'}}></div>
 			</div>
 		);
