@@ -69,6 +69,8 @@ class MochaRunnerComponent extends Component {
 	}
 
 	render () {
+		console.log ('render');
+
 		return (
 			<div>
 				<div id="story" ref={(story) => this.story = story}/>
