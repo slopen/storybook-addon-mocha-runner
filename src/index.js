@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import addons from '@kadira/storybook-addons';
+import debounce from 'lodash.debounce';
 
 const cloneHook = (htmlElement) => (hook) => {
 	const {hookFn} = hook.fn;
@@ -30,53 +31,59 @@ const cloneSuite = (suite, htmlElement) => {
 	return clone;
 }
 
+const runMocha = (suite, story, channel) => {
+	const rootSuite = window.mocha.suite;
+
+	rootSuite.suites = [];
+	rootSuite.addSuite (
+		cloneSuite (suite, story)
+	);
+
+	document.getElementById ('mocha').innerHTML = '';
+
+	window.mocha
+		.run ()
+		.on ('end', () => channel.emit (
+			'addon-mocha-runner/test-results',
+			document.getElementById ('mocha').innerHTML
+		));
+}
+
+
 
 class MochaRunnerComponent extends Component {
+	componentWillUnmount () {
+		this._umounted = true;
+	}
+
 	componentDidMount () {
-		console.log ('did mount');
+		this._umounted = false;
 		this.runSuites ();
 	}
 
 	componentDidUpdate () {
-		console.log ('did update');
 		this.runSuites ();
 	}
 
-	runSuites () {
+	runSuites = debounce (() => {
+		if (this._umounted) {
+			return;
+		}
+
 		const channel = addons.getChannel ();
-		const rootSuite = window.mocha.suite;
 
 		const {info, suites} = this.props;
 		const storyName = info.story;
 		const suite = suites [storyName];
 
 		if (suite) {
-			rootSuite.suites = [];
-			rootSuite.addSuite (
-				cloneSuite (suites [storyName], this.story)
-			);
-
-			window.mocha
-				.run ()
-				.on ('end', () => channel.emit (
-					'addon-mocha-runner/test-results',
-					document.getElementById ('mocha').innerHTML
-				));
-
+			runMocha (suite, this.story, channel);
 		} else {
 			console.error ('ERROR suite not found by name:', storyName);
 		}
-	}
-
-	// shouldComponentUpdate (a, b) {
-	// 	console.log (a, b);
-
-	// 	return true;
-	// }
+	}, 50)
 
 	render () {
-		console.log ('render', this.props, this.state);
-
 		return (
 			<div>
 				<div id="story" ref={(story) => this.story = story}/>

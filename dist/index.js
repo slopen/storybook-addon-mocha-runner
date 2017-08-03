@@ -36,6 +36,10 @@ var _storybookAddons = require('@kadira/storybook-addons');
 
 var _storybookAddons2 = _interopRequireDefault(_storybookAddons);
 
+var _lodash = require('lodash.debounce');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var cloneHook = function cloneHook(htmlElement) {
@@ -74,63 +78,75 @@ var cloneSuite = function cloneSuite(suite, htmlElement) {
 	return clone;
 };
 
+var runMocha = function runMocha(suite, story, channel) {
+	var rootSuite = window.mocha.suite;
+
+	rootSuite.suites = [];
+	rootSuite.addSuite(cloneSuite(suites[storyName], story));
+
+	document.getElementById('mocha').innerHTML = '';
+
+	window.mocha.run().on('end', function () {
+		return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
+	});
+};
+
 var MochaRunnerComponent = function (_Component) {
 	(0, _inherits3.default)(MochaRunnerComponent, _Component);
 
 	function MochaRunnerComponent() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, MochaRunnerComponent);
-		return (0, _possibleConstructorReturn3.default)(this, (MochaRunnerComponent.__proto__ || (0, _getPrototypeOf2.default)(MochaRunnerComponent)).apply(this, arguments));
-	}
 
-	(0, _createClass3.default)(MochaRunnerComponent, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			console.log('did mount');
-			this.runSuites();
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
 		}
-	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate() {
-			console.log('did update');
-			this.runSuites();
-		}
-	}, {
-		key: 'runSuites',
-		value: function runSuites() {
+
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = MochaRunnerComponent.__proto__ || (0, _getPrototypeOf2.default)(MochaRunnerComponent)).call.apply(_ref, [this].concat(args))), _this), _this.runSuites = (0, _lodash2.default)(function () {
+			if (_this._umounted) {
+				return;
+			}
+
 			var channel = _storybookAddons2.default.getChannel();
-			var rootSuite = window.mocha.suite;
 
-			var _props = this.props,
-			    info = _props.info,
-			    suites = _props.suites;
+			var _this$props = _this.props,
+			    info = _this$props.info,
+			    suites = _this$props.suites;
 
 			var storyName = info.story;
 			var suite = suites[storyName];
 
 			if (suite) {
-				rootSuite.suites = [];
-				rootSuite.addSuite(cloneSuite(suites[storyName], this.story));
-
-				window.mocha.run().on('end', function () {
-					return channel.emit('addon-mocha-runner/test-results', document.getElementById('mocha').innerHTML);
-				});
+				_this.runMocha(suite, _this.story, channel);
 			} else {
 				console.error('ERROR suite not found by name:', storyName);
 			}
+		}, 50), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+	}
+
+	(0, _createClass3.default)(MochaRunnerComponent, [{
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			this._umounted = true;
 		}
-
-		// shouldComponentUpdate (a, b) {
-		// 	console.log (a, b);
-
-		// 	return true;
-		// }
-
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this._umounted = false;
+			this.runSuites();
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			this.runSuites();
+		}
 	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
-
-			console.log('render', this.props, this.state);
 
 			return _react2.default.createElement(
 				'div',
