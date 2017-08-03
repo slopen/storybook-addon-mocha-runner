@@ -85,11 +85,13 @@ var MochaRunnerComponent = function (_Component) {
 	(0, _createClass3.default)(MochaRunnerComponent, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			console.log('did mount');
 			this.runSuites();
 		}
 	}, {
 		key: 'componenDidUpdate',
 		value: function componenDidUpdate() {
+			console.log('did update');
 			this.runSuites();
 		}
 	}, {
@@ -118,13 +120,16 @@ var MochaRunnerComponent = function (_Component) {
 		}
 	}, {
 		key: 'shouldComponentUpdate',
-		value: function shouldComponentUpdate() {
+		value: function shouldComponentUpdate(a, b) {
+			console.log(a, b);
 			return true;
 		}
 	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
+
+			console.log('render', this.props, this.state);
 
 			return _react2.default.createElement(
 				'div',

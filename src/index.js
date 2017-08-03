@@ -33,10 +33,12 @@ const cloneSuite = (suite, htmlElement) => {
 
 class MochaRunnerComponent extends Component {
 	componentDidMount () {
+		console.log ('did mount');
 		this.runSuites ();
 	}
 
 	componenDidUpdate () {
+		console.log ('did update');
 		this.runSuites ();
 	}
 
@@ -66,11 +68,15 @@ class MochaRunnerComponent extends Component {
 		}
 	}
 
-	shouldComponentUpdate () {
+	shouldComponentUpdate (a, b) {
+		console.log (a, b);
+
 		return true;
 	}
 
 	render () {
+		console.log ('render', this.props, this.state);
+
 		return (
 			<div>
 				<div id="story" ref={(story) => this.story = story}/>
