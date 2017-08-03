@@ -89,8 +89,8 @@ var MochaRunnerComponent = function (_Component) {
 			this.runSuites();
 		}
 	}, {
-		key: 'componenDidUpdate',
-		value: function componenDidUpdate() {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
 			console.log('did update');
 			this.runSuites();
 		}
@@ -122,6 +122,7 @@ var MochaRunnerComponent = function (_Component) {
 		key: 'shouldComponentUpdate',
 		value: function shouldComponentUpdate(a, b) {
 			console.log(a, b);
+
 			return true;
 		}
 	}, {

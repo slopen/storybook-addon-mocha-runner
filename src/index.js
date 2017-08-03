@@ -37,7 +37,7 @@ class MochaRunnerComponent extends Component {
 		this.runSuites ();
 	}
 
-	componenDidUpdate () {
+	componentDidUpdate () {
 		console.log ('did update');
 		this.runSuites ();
 	}
